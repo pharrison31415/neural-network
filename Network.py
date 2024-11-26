@@ -27,6 +27,8 @@ class Network:
         return x * (1 - x)
 
     def feedforward(self, x):
+        assert x.shape == self.activations[0].shape
+
         self.activations[0] = x
         for layer in range(self.layer_count-1):  # Hidden layers onward
             w = self.weights[layer]
