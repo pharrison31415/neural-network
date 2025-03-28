@@ -92,11 +92,9 @@ class Network:
         for l in range(self.layer_count - 1, 0, -1):
             dC_da = self.cost_derivative(self.a[l], y)
             da_dz = self.activation_derivative(self.z[l])
-            dz_dw = self.a[l-1]
-
-            # dC_dz = np.dot(dC_da, da_dz)
             dC_dz = dC_da * da_dz
-            # dC_dw = np.dot(dC_dz, dz_dw)
+
+            dz_dw = self.a[l-1]
             dC_dw = np.outer(dC_dz, dz_dw)
             nabla_w[l] = dC_dw
 
