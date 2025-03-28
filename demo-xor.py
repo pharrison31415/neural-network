@@ -17,7 +17,7 @@ for batch in range(1000):
         x_list.append(np.array([x1, x2]))
         y_list.append(np.array([y]))
 
-    net.learn_batch(x_list, y_list, 0.1)
+    net.train_batch(x_list, y_list, 0.1)
 
 # Demonstrate results of xor training
 domain = (
