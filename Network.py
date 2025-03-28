@@ -1,58 +1,114 @@
 import numpy as np
 
 
+def sigmoid(z):
+    return (np.exp(-z) + 1) ** -1
+
+
+def sigmoid_derivative(z):
+    return sigmoid(z) * (1 - sigmoid(z))
+
+
+def relu(z):
+    return np.maximum(0, z)
+
+
+def relu_derivative(z):
+    return np.where(z > 0, 1, 0)
+
+
+def mean_squared_error(a, y):
+    return np.mean((y - a)**2)
+
+
+def mean_squared_error_derivative(a, y):
+    return (a - y) * 2
+
+
 class Network:
     def __init__(self, *shape):
         self.shape = shape
         self.layer_count = len(shape)
-        self.weights = [
+
+        self.w = [0] + [  # Sentry weight, as input layer has no weights
             np.random.rand(curr, prev)
             for prev, curr in zip(self.shape, self.shape[1:])
         ]
 
-        self.biases = [
+        self.b = [0] + [  # Sentry bias, as input layer has no bias
             np.random.uniform(low=-prev, high=prev, size=(curr))
             for prev, curr in zip(self.shape, self.shape[1:])
         ]
 
-        self.activations = [
-            np.zeros(neuron_count)
-            for neuron_count in self.shape
-        ]
+        self.z = [np.zeros(neuron_count) for neuron_count in self.shape]
+        self.a = [np.zeros(neuron_count) for neuron_count in self.shape]
 
-    def sigmoid(self, x):
-        return (np.exp(-x) + 1) ** -1
+    def activation(self, z):
+        return sigmoid(z)
 
-    def sigmoid_derivative(self, x):
-        return x * (1 - x)
+    def activation_derivative(self, z):
+        return sigmoid_derivative(z)
+
+    def cost(self, a, y):
+        return mean_squared_error(a, y)
+
+    def cost_derivative(self, a, y):
+        return mean_squared_error_derivative(a, y)
+
+    def learn_batch(self, x_list, desired_y_list, learn_rate):
+        batch_nabla_w = []
+        batch_nabla_b = []
+        for x, desired_y in zip(x_list, desired_y_list):
+            self.feedforward(x)
+            nabla_w, nabla_b = self.backpropagate(desired_y)
+            batch_nabla_w.append(nabla_w)
+            batch_nabla_b.append(nabla_b)
+
+        avg_nabla_w = []
+        for nw in zip(*batch_nabla_w):
+            avg_nabla_w.append(np.average(nw, axis=0))
+        self.update_weights(avg_nabla_w, learn_rate)
+
+        avg_nabla_b = []
+        for nb in zip(*batch_nabla_b):
+            avg_nabla_b.append(np.average(nb, axis=0))
+        self.update_biases(avg_nabla_b, learn_rate)
 
     def feedforward(self, x):
-        assert x.shape == self.activations[0].shape
+        assert x.shape == self.a[0].shape
 
-        self.activations[0] = x
-        for layer in range(self.layer_count-1):  # Hidden layers onward
-            w = self.weights[layer]
-            b = self.biases[layer]
-            self.activations[layer + 1] = self.sigmoid(
-                np.matmul(w, self.activations[layer]) + b)
+        self.a[0] = x
+        for l in range(1, self.layer_count):  # Hidden layers onward
+            z = np.dot(self.w[l], self.a[l - 1]) + self.b[l]
+            a = self.activation(z)
 
-    def backpropagate(self, desired_y, learn_rate):
-        deltas = [np.zeros(neuron_count) for neuron_count in self.shape]
+            self.z[l] = z
+            self.a[l] = a
 
-        # Calculate error and delta for the output layer
-        output_error = desired_y - self.activations[-1]
-        output_delta = output_error * \
-            self.sigmoid_derivative(self.activations[-1])
-        deltas[-1] = output_delta
+    def backpropagate(self, y):
+        nabla_w = [np.zeros_like(w) for w in self.w]
+        nabla_b = [np.zeros_like(b) for b in self.b]
 
-        # Backpropagate through the hidden layers
-        for layer in range(self.layer_count - 2, 0, -1):
-            error = np.matmul(self.weights[layer].T, deltas[layer + 1])
-            delta = error * self.sigmoid_derivative(self.activations[layer])
-            deltas[layer] = delta
+        for l in range(self.layer_count - 1, 0, -1):
+            dC_da = self.cost_derivative(self.a[l], y)
+            da_dz = self.activation_derivative(self.z[l])
+            dz_dw = self.a[l-1]
 
-        # Update weights and biases
-        for layer in range(self.layer_count - 1):
-            self.weights[layer] += learn_rate * \
-                np.outer(deltas[layer + 1], self.activations[layer])
-            self.biases[layer] += learn_rate * deltas[layer + 1]
+            # dC_dz = np.dot(dC_da, da_dz)
+            dC_dz = dC_da * da_dz
+            # dC_dw = np.dot(dC_dz, dz_dw)
+            dC_dw = np.outer(dC_dz, dz_dw)
+            nabla_w[l] = dC_dw
+
+            nabla_b[l] = dC_dz   # dC/db = dC/dz * dz/db; but dz/db = 1
+
+        # Sentry nabla weight and nabla bias
+        return [0] + nabla_w, [0] + nabla_b
+
+    def update_weights(self, nabla_w, learn_rate):
+        for l in range(self.layer_count - 1):
+            self.w[l] += learn_rate * nabla_w[l]
+
+    def update_biases(self, nabla_b, learn_rate):
+        for l in range(self.layer_count - 1):
+            self.b[l] += learn_rate * nabla_b[l]
