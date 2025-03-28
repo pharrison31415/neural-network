@@ -30,12 +30,12 @@ class Network:
         self.shape = shape
         self.layer_count = len(shape)
 
-        self.w = [0] + [  # Sentry weight, as input layer has no weights
+        self.w = [0] + [  # Sentinel weight, as input layer has no weights
             np.random.rand(curr, prev)
             for prev, curr in zip(self.shape, self.shape[1:])
         ]
 
-        self.b = [0] + [  # Sentry bias, as input layer has no bias
+        self.b = [0] + [  # Sentinel bias, as input layer has no bias
             np.random.uniform(low=-prev, high=prev, size=(curr))
             for prev, curr in zip(self.shape, self.shape[1:])
         ]
@@ -100,7 +100,7 @@ class Network:
 
             nabla_b[l] = dC_dz   # dC/db = dC/dz * dz/db; but dz/db = 1
 
-        # Sentry nabla weight and nabla bias
+        # Sentinel nabla weight and nabla bias
         return [0] + nabla_w, [0] + nabla_b
 
     def update_weights(self, nabla_w, learn_rate):
