@@ -55,7 +55,7 @@ class Network:
     def cost_derivative(self, a, y):
         return mean_squared_error_derivative(a, y)
 
-    def train_batch(self, x_arr, y_arr, learn_rate):
+    def train(self, x_arr, y_arr, learn_rate):
         batch_nabla_w = []
         batch_nabla_b = []
         for x, y in zip(x_arr, y_arr):
