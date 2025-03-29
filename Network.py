@@ -32,12 +32,11 @@ class Network:
 
         self.w = [0] + [  # Sentinel weight, as input layer has no weights
             np.random.rand(curr, prev)
-            for prev, curr in zip(self.shape, self.shape[1:])
+            for prev, curr in zip(self.shape[:-1], self.shape[1:])
         ]
 
         self.b = [0] + [  # Sentinel bias, as input layer has no bias
-            np.random.uniform(low=-prev, high=prev, size=(curr))
-            for prev, curr in zip(self.shape, self.shape[1:])
+            np.random.randn(curr) for curr in self.shape[1:]
         ]
 
         self.z = [np.zeros(neuron_count) for neuron_count in self.shape]
@@ -98,8 +97,9 @@ class Network:
                 # dz[l]/da[l-1] = w[l]
                 # da[l]/dz[l] * dC/da[l] = dC/dz[l]
                 # dC/da[l-1] = w[l] * dC/dz[l]
-                dC_da = np.dot(self.w[l], dC_dz)
+                dC_da = np.dot(self.w[l+1].transpose(), dC_dz)
 
+            # dC/dz = dC/da * da/dz;  da/dz = σ'(z)
             dC_dz = dC_da * self.activation_derivative(self.z[l])
 
             # dC/db = dC/dz * dz/db;  dz/db = 1
