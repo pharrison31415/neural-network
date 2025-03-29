@@ -3,7 +3,7 @@ import numpy as np
 import random
 
 # Initialize network
-net = Network(2, 3, 1)
+net = Network([2, 3, 1])
 
 # Train network for 10_000 epochs of mini-batches of size 10
 for batch in range(10_000):

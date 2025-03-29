@@ -26,20 +26,24 @@ def mean_squared_error_derivative(a, y):
 
 
 class Network:
-    def __init__(self, *shape):
+    def __init__(self, shape):
         self.shape = shape
         self.layer_count = len(shape)
 
+        # Weights
         self.w = [0] + [  # Sentinel weight, as input layer has no weights
             np.random.rand(curr, prev)
             for prev, curr in zip(self.shape[:-1], self.shape[1:])
         ]
 
+        # Biases
         self.b = [0] + [  # Sentinel bias, as input layer has no bias
             np.random.randn(curr) for curr in self.shape[1:]
         ]
 
+        # Z-vectors; pre-activation values
         self.z = [np.zeros(neuron_count) for neuron_count in self.shape]
+        # Activation values
         self.a = [np.zeros(neuron_count) for neuron_count in self.shape]
 
     def activation(self, z):
@@ -77,7 +81,9 @@ class Network:
         assert x.shape == self.a[0].shape
 
         self.a[0] = x
-        for l in range(1, self.layer_count):  # Hidden layers onward
+        # Hidden layers onward
+        for l in range(1, self.layer_count):
+            # Note: Sentinel values in weights and biases mean 1-based indexing
             z = np.dot(self.w[l], self.a[l - 1]) + self.b[l]
             a = self.activation(z)
 
@@ -90,7 +96,7 @@ class Network:
 
         for l in range(self.layer_count - 1, 0, -1):
             if l == self.layer_count - 1:
-                # use y for desired activation values
+                # Use y for desired activation values
                 dC_da = self.cost_derivative(self.a[l], y)
             else:
                 # dC/da[l-1] = dz[l]/da[l-1] * da[l]/dz[l] * dC/da[l]
