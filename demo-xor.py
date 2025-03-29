@@ -5,8 +5,8 @@ import random
 # Initialize network
 net = Network(2, 3, 1)
 
-# Train network for 1000 epochs of mini-batches of size 10
-for batch in range(1000):
+# Train network for 10_000 epochs of mini-batches of size 10
+for batch in range(10_000):
     x_arr = []
     y_arr = []
     for _ in range(10):
@@ -17,7 +17,7 @@ for batch in range(1000):
         x_arr.append(np.array([x1, x2]))
         y_arr.append(np.array([y]))
 
-    net.train(x_arr, y_arr, 0.1)
+    net.train(x_arr, y_arr, 1.0)
 
 # Demonstrate results of XOR training
 domain = (

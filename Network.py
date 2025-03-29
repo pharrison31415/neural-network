@@ -88,7 +88,7 @@ class Network:
         nabla_w = [np.zeros_like(w) for w in self.w]
         nabla_b = [np.zeros_like(b) for b in self.b]
 
-        for l in range(self.layer_count - 1, -1, -1):
+        for l in range(self.layer_count - 1, 0, -1):
             if l == self.layer_count - 1:
                 # use y for desired activation values
                 dC_da = self.cost_derivative(self.a[l], y)
@@ -112,8 +112,8 @@ class Network:
 
     def update_weights(self, nabla_w, learn_rate):
         for l in range(1, self.layer_count):
-            self.w[l] += learn_rate * nabla_w[l]
+            self.w[l] -= learn_rate * nabla_w[l]
 
     def update_biases(self, nabla_b, learn_rate):
         for l in range(1, self.layer_count):
-            self.b[l] += learn_rate * nabla_b[l]
+            self.b[l] -= learn_rate * nabla_b[l]
