@@ -9,7 +9,7 @@ net = Network(1, 2, 1)
 for batch in range(1000):
     x_arr = np.array([[random.choice([0.0, 1.0])] for _ in range(10)])
     y_arr = np.array([[float(not x[0])] for x in x_arr])  # y = NOT x
-    net.batch(x_arr, y_arr, 0.1)
+    net.train(x_arr, y_arr, 0.1)
 
 # Demonstrate results of negation training
 for x in (np.array([0.0]), np.array([1.0])):

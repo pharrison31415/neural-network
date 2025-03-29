@@ -90,15 +90,23 @@ class Network:
         nabla_b = [np.zeros_like(b) for b in self.b]
 
         for l in range(self.layer_count - 1, 0, -1):
-            dC_da = self.cost_derivative(self.a[l], y)
-            da_dz = self.activation_derivative(self.z[l])
-            dC_dz = dC_da * da_dz
+            if l == self.layer_count - 1:
+                # use y for desired activation values
+                dC_da = self.cost_derivative(self.a[l], y)
+            else:
+                # dC/da[l-1] = dz[l]/da[l-1] * da[l]/dz[l] * dC/da[l]
+                # dz[l]/da[l-1] = w[l]
+                # da[l]/dz[l] * dC/da[l] = dC/dz[l]
+                # dC/da[l-1] = w[l] * dC/dz[l]
+                dC_da = np.dot(self.w[l], dC_dz)
 
-            dz_dw = self.a[l-1]
-            dC_dw = np.outer(dC_dz, dz_dw)
-            nabla_w[l] = dC_dw
+            dC_dz = dC_da * self.activation_derivative(self.z[l])
 
-            nabla_b[l] = dC_dz   # dC/db = dC/dz * dz/db; but dz/db = 1
+            # dC/db = dC/dz * dz/db;  dz/db = 1
+            nabla_b[l] = dC_dz
+
+            # dC/dw = dC/dz * dz_dw;  dz/dw = a[l]
+            nabla_w[l] = np.outer(dC_dz, self.a[l-1])
 
         # Sentinel nabla weight and nabla bias
         return [0] + nabla_w, [0] + nabla_b
