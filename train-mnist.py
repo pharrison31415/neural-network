@@ -9,9 +9,10 @@ from Network.Network import Network
 
 HELP_MESSAGE = """train-mnsit.py Usage:
 
-$ python train-mnist.py MNIST_CSV OUT_FILE
+$ python train-mnist.py MNIST_CSV EPOCHS OUT_FILE
 
  - MNIST_CSV is a csv file containing labels and pixel values for the MNIST dataset. Try unzipping mnist.csv.zip.
+ - EPOCHS is the number of epochs to run the training for.
  - OUT_FILE is a file to dump the contents of the trained network.
 """
 
@@ -71,25 +72,34 @@ def train_network(df, epochs, mini_batch_size, learn_rate, progress_bar=True):
 
 if __name__ == "__main__":
     # Validate length of arguments
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         print(HELP_MESSAGE, file=sys.stderr)
         sys.exit(1)
 
     # Grab system arguments
     IN_CSV = sys.argv[1]
-    OUT_FILE = sys.argv[2]
+    EPOCHS_STR = sys.argv[2]
+    OUT_FILE = sys.argv[3]
 
     # Check if IN_CSV file exists
     if not os.path.exists(IN_CSV):
         print(f"Error: The file \"{IN_CSV}\" does not exist.", file=sys.stderr)
         sys.exit(1)
 
+    # Validate EPOCHS argument
+    try:
+        epochs = int(EPOCHS_STR)
+    except ValueError:
+        print("Error: EPOCHS must be a positive integer")
+
     # Read MNIST csv
     mnist_df = pd.read_csv(IN_CSV)
 
     # Train network
-    net = train_network(mnist_df, epochs=10_000,
-                        mini_batch_size=100, learn_rate=0.1)
+    net = train_network(mnist_df,
+                        epochs,
+                        mini_batch_size=100,
+                        learn_rate=1.0)
 
     # Save pickle dump of network
     with open(OUT_FILE, "wb") as file:
