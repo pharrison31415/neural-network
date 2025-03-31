@@ -1,4 +1,4 @@
-from Network import Network
+from .Network import Network
 import numpy as np
 import random
 
