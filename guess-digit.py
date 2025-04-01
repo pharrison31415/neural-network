@@ -116,9 +116,9 @@ while running:
         # Guess digit
         x = canvas.flatten()/255
         network.feedforward(x)
-        print()
-        for i, val in enumerate(network.a[-1]):
-            print(f"{i} -> {val}")
+        probabilities = list(network.evaluate(x, do_softmax=True))
+        best_guess = probabilities.index(max(probabilities))
+        print(f"{best_guess} -> {probabilities[best_guess]}")
 
         old_mouse_x = mouse_x
         old_mouse_y = mouse_y

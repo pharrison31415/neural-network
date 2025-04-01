@@ -25,6 +25,11 @@ def mean_squared_error_derivative(a, y):
     return (a - y) * 2
 
 
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=-1, keepdims=True)
+
+
 class Network:
     def __init__(self, shape):
         self.shape = shape
@@ -89,6 +94,14 @@ class Network:
 
             self.z[l] = z
             self.a[l] = a
+
+    def evaluate(self, x, do_softmax=False):
+        self.feedforward(x)
+        out = np.copy(self.a[-1])
+        if do_softmax:
+            out = softmax(out)
+        out.flags.writeable = False
+        return out
 
     def backpropagate(self, y):
         nabla_w = [np.zeros_like(w) for w in self.w]
