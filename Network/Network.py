@@ -32,7 +32,7 @@ class Network:
 
         # Weights
         self.w = [0] + [  # Sentinel weight, as input layer has no weights
-            np.random.rand(curr, prev)
+            np.random.randn(curr, prev)
             for prev, curr in zip(self.shape[:-1], self.shape[1:])
         ]
 
