@@ -118,7 +118,10 @@ while running:
         network.feedforward(x)
         probabilities = list(network.evaluate(x, do_softmax=True))
         best_guess = probabilities.index(max(probabilities))
-        print(f"{best_guess} -> {probabilities[best_guess]}")
+
+        sys.stdout.write(
+            f"\rBest guess: {best_guess} with probability {probabilities[best_guess] * 100:.2f}%")
+        sys.stdout.flush()
 
         old_mouse_x = mouse_x
         old_mouse_y = mouse_y
@@ -128,4 +131,5 @@ while running:
     pygame.draw.circle(screen, "gray", (mouse_x, mouse_y), PEN_RADIUS, 1)
     pygame.display.flip()
 
+print()
 pygame.quit()
