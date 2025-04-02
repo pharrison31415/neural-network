@@ -122,7 +122,7 @@ while running:
         guess, probability = network.evaluate(
             x, apply_softmax=True, sort=True)[-1]
         sys.stdout.write(
-            f"\rBest guess: {guess} with probability {probability * 100:.2f}%")
+            f"\rBest guess: {int(guess)} with probability {probability * 100:.2f}%")
         sys.stdout.flush()
 
         # Antiquate mouse coordinates
