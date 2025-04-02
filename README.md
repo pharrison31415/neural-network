@@ -53,6 +53,7 @@ Click and drag to draw a digit. Hit space to clear canvas.
 ```
 
 Example output:
+
 ![A hand-drawn three](example-three.png)
 
 ```
