@@ -86,13 +86,12 @@ class Network:
         assert x.shape == self.a[0].shape
 
         self.a[0] = x
-        for l in range(1, self.layer_count):
-            # Note: Sentinel values in weights and biases mean 1-based indexing
-            z = np.dot(self.w[l-1], self.a[l - 1]) + self.b[l-1]
+        for l in range(self.layer_count - 1):
+            z = np.dot(self.w[l], self.a[l]) + self.b[l]
             a = self.activation(z)
 
-            self.z[l] = z
-            self.a[l] = a
+            self.z[l+1] = z
+            self.a[l+1] = a
 
     def evaluate(self, x, do_softmax=False):
         self.feedforward(x)
