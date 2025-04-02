@@ -2,6 +2,8 @@
 
 This Python library implements a simple neural network framework inspired by the [YouTube series on the subject by 3Blue1Brown](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi). The library allows for the instatiation, training, and evaluation of neural networks using backpropagation and stochastic gradient descent.
 
+We're in the process of training a model to recognize digits from the [MNIST database](https://en.wikipedia.org/wiki/MNIST_database). We hope to improve it, but in the meantime, it can still classify a lot of digits correctly :\)
+
 ## Quick Start
 
 Start by cloning the repository and setting up the virtual environment:
