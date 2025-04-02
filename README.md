@@ -85,6 +85,7 @@ Total:          10000
 ### `view-mnist-digit.py`
 
 Want to peek through a dataset? Preview the data on the same 28 \* 28 grid seen in `guess-digit.py`.
+
 Usage:
 
 ```
