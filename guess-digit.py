@@ -31,7 +31,7 @@ if not os.path.exists(NETWORK_FILE):
 with open(NETWORK_FILE, "rb") as file:
     network = pickle.load(file, fix_imports=False)
 
-
+# Constants for display
 GRID_SIZE = 28
 CELL_SIZE = 24
 WIDTH, HEIGHT = GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE
@@ -42,10 +42,12 @@ BLACK = 0
 PEN_RADIUS = 1.25 * CELL_SIZE
 PEN_INTENSITY = 0.3
 
+# Initialize pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Draw a digit")
 
+# Initialize canvas (input to network)
 canvas = np.array([[BLACK] * GRID_SIZE] * GRID_SIZE, dtype=np.uint8)
 
 
@@ -60,6 +62,7 @@ def draw_canvas(screen, canvas):
                 screen, [canvas[r][c]] * 3, (c * CELL_SIZE, r * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
 
+# Initialize variables used throughout the game loop
 running = True
 pen_down = False
 mouse_move = False
@@ -113,16 +116,16 @@ while running:
             canvas, (WHITE * intensity_arr).astype(np.uint8), dtype=np.uint16)
         canvas = np.clip(overflow_canvas, a_min=0, a_max=255)
 
-        # Guess digit
-        x = canvas.flatten()/255
+        # Feed canvas into network and display guess, probability
+        x = canvas.flatten() / 255
         network.feedforward(x)
-        probabilities = list(network.evaluate(x, apply_softmax=True))
-        best_guess = probabilities.index(max(probabilities))
-
+        guess, probability = network.evaluate(
+            x, apply_softmax=True, sort=True)[-1]
         sys.stdout.write(
-            f"\rBest guess: {best_guess} with probability {probabilities[best_guess] * 100:.2f}%")
+            f"\rBest guess: {guess} with probability {probability * 100:.2f}%")
         sys.stdout.flush()
 
+        # Antiquate mouse coordinates
         old_mouse_x = mouse_x
         old_mouse_y = mouse_y
 

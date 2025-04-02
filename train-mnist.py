@@ -40,7 +40,7 @@ def train_network(df, epochs, mini_batch_size, learn_rate, progress_bar=True):
         # Build mini-batch
         mini_batch = df.sample(n=mini_batch_size, replace=True)
 
-        # Regex for [string of digits]x[string of digits]
+        # Regex for [digits]x[digits]
         # Columns for pixel values are of the form 1x1, 1x2, ... 28x28
         pixel_column_regex = '^\d+x\d+$'
 

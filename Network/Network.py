@@ -91,11 +91,20 @@ class Network:
             self.z[l+1] = z
             self.a[l+1] = a
 
-    def evaluate(self, x, apply_softmax=False):
+    def evaluate(self, x, apply_softmax=False, sort=False):
         self.feedforward(x)
         out = np.copy(self.a[-1])
+
+        # Normalize such that Σ(out) = 1
         if apply_softmax:
             out = softmax(out)
+
+        if sort:
+            # Enumerate each element
+            out = np.column_stack((np.arange(out.shape[0]), out))
+            # Sort by second column
+            out = out[out[:, 1].argsort()]
+
         out.flags.writeable = False
         return out
 
