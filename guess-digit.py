@@ -116,7 +116,7 @@ while running:
         # Guess digit
         x = canvas.flatten()/255
         network.feedforward(x)
-        probabilities = list(network.evaluate(x, do_softmax=True))
+        probabilities = list(network.evaluate(x, apply_softmax=True))
         best_guess = probabilities.index(max(probabilities))
 
         sys.stdout.write(

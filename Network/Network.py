@@ -91,10 +91,10 @@ class Network:
             self.z[l+1] = z
             self.a[l+1] = a
 
-    def evaluate(self, x, do_softmax=False):
+    def evaluate(self, x, apply_softmax=False):
         self.feedforward(x)
         out = np.copy(self.a[-1])
-        if do_softmax:
+        if apply_softmax:
             out = softmax(out)
         out.flags.writeable = False
         return out
