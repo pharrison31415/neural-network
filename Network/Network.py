@@ -42,9 +42,7 @@ class Network:
         ]
 
         # Biases
-        self.b = [
-            np.random.randn(curr) for curr in self.shape[1:]
-        ]
+        self.b = [np.random.randn(curr) for curr in self.shape[1:]]
 
         # Z-vectors; pre-activation values
         self.z = [np.zeros(neuron_count) for neuron_count in self.shape]
@@ -110,10 +108,10 @@ class Network:
                 # Use y for desired activation values
                 dC_da = self.cost_derivative(self.a[l+1], y)
             else:
-                # dC/da[l-1] = dz[l]/da[l-1] * da[l]/dz[l] * dC/da[l]
-                # dz[l]/da[l-1] = w[l]
-                # da[l]/dz[l] * dC/da[l] = dC/dz[l]
-                # dC/da[l-1] = w[l] * dC/dz[l]
+                # dC/da[l] = dz[l+1]/da[l] * da[l+1]/dz[l+1] * dC/da[l+1]
+                # dz[l+1]/da[l] = w[l+1]
+                # da[l+1]/dz[l+1] * dC/da[l+1] = dC/dz[l+1]
+                # dC/da[l] = w[l+1] * dC/dz[l+1]
                 dC_da = np.dot(self.w[l+1].transpose(), dC_dz)
 
             # dC/dz = dC/da * da/dz;  da/dz = σ'(z)
