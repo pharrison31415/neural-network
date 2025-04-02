@@ -36,13 +36,13 @@ class Network:
         self.layer_count = len(shape)
 
         # Weights
-        self.w = [0] + [  # Sentinel weight, as input layer has no weights
+        self.w = [
             np.random.randn(curr, prev)
             for prev, curr in zip(self.shape[:-1], self.shape[1:])
         ]
 
         # Biases
-        self.b = [0] + [  # Sentinel bias, as input layer has no bias
+        self.b = [
             np.random.randn(curr) for curr in self.shape[1:]
         ]
 
@@ -86,10 +86,9 @@ class Network:
         assert x.shape == self.a[0].shape
 
         self.a[0] = x
-        # Hidden layers onward
         for l in range(1, self.layer_count):
             # Note: Sentinel values in weights and biases mean 1-based indexing
-            z = np.dot(self.w[l], self.a[l - 1]) + self.b[l]
+            z = np.dot(self.w[l-1], self.a[l - 1]) + self.b[l-1]
             a = self.activation(z)
 
             self.z[l] = z
@@ -116,23 +115,23 @@ class Network:
                 # dz[l]/da[l-1] = w[l]
                 # da[l]/dz[l] * dC/da[l] = dC/dz[l]
                 # dC/da[l-1] = w[l] * dC/dz[l]
-                dC_da = np.dot(self.w[l+1].transpose(), dC_dz)
+                dC_da = np.dot(self.w[l].transpose(), dC_dz)
 
             # dC/dz = dC/da * da/dz;  da/dz = σ'(z)
             dC_dz = dC_da * self.activation_derivative(self.z[l])
 
             # dC/db = dC/dz * dz/db;  dz/db = 1
-            nabla_b[l] = dC_dz
+            nabla_b[l-1] = dC_dz
 
             # dC/dw = dC/dz * dz_dw;  dz/dw = a[l]
-            nabla_w[l] = np.outer(dC_dz, self.a[l-1])
+            nabla_w[l-1] = np.outer(dC_dz, self.a[l-1])
 
         return nabla_w, nabla_b
 
     def update_weights(self, nabla_w, learn_rate):
-        for l in range(1, self.layer_count):
+        for l in range(self.layer_count - 1):
             self.w[l] -= learn_rate * nabla_w[l]
 
     def update_biases(self, nabla_b, learn_rate):
-        for l in range(1, self.layer_count):
+        for l in range(self.layer_count - 1):
             self.b[l] -= learn_rate * nabla_b[l]
