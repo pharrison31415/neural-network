@@ -29,7 +29,7 @@ def print_progress_bar(iteration, total, bar_length=40):
 
 def train_network(df, epochs, mini_batch_size, learn_rate, progress_bar=True):
     # Initialize network
-    net = Network([28*28, 16, 16, 10])
+    net = Network([28*28, 6, 6, 10])
 
     # Training
     for epoch in range(epochs):
