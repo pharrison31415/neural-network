@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import pandas as pd
 
-HELP_MESSAGE = """train-mnsit.py Usage:
+HELP_MESSAGE = """test-mnsit.py Usage:
 
 $ python test-mnist.py MNIST_CSV NETWORK_FILE
 
