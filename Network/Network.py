@@ -106,25 +106,25 @@ class Network:
         nabla_w = [np.zeros_like(w) for w in self.w]
         nabla_b = [np.zeros_like(b) for b in self.b]
 
-        for l in range(self.layer_count - 1, 0, -1):
-            if l == self.layer_count - 1:
+        for l in range(self.layer_count - 2, -1, -1):
+            if l == self.layer_count - 2:
                 # Use y for desired activation values
-                dC_da = self.cost_derivative(self.a[l], y)
+                dC_da = self.cost_derivative(self.a[l+1], y)
             else:
                 # dC/da[l-1] = dz[l]/da[l-1] * da[l]/dz[l] * dC/da[l]
                 # dz[l]/da[l-1] = w[l]
                 # da[l]/dz[l] * dC/da[l] = dC/dz[l]
                 # dC/da[l-1] = w[l] * dC/dz[l]
-                dC_da = np.dot(self.w[l].transpose(), dC_dz)
+                dC_da = np.dot(self.w[l+1].transpose(), dC_dz)
 
             # dC/dz = dC/da * da/dz;  da/dz = σ'(z)
-            dC_dz = dC_da * self.activation_derivative(self.z[l])
+            dC_dz = dC_da * self.activation_derivative(self.z[l+1])
 
             # dC/db = dC/dz * dz/db;  dz/db = 1
-            nabla_b[l-1] = dC_dz
+            nabla_b[l] = dC_dz
 
             # dC/dw = dC/dz * dz_dw;  dz/dw = a[l]
-            nabla_w[l-1] = np.outer(dC_dz, self.a[l-1])
+            nabla_w[l] = np.outer(dC_dz, self.a[l])
 
         return nabla_w, nabla_b
 
