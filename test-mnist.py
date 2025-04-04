@@ -14,10 +14,22 @@ $ python test-mnist.py MNIST_CSV NETWORK_FILE
 """
 
 
+def print_progress_bar(iteration, total, bar_length=40):
+    progress = iteration / total
+    arrow = '=' * int(round(progress * bar_length) - 1)
+    spaces = ' ' * (bar_length - len(arrow))
+
+    sys.stdout.write(
+        f'\r[{arrow}{spaces}] {progress * 100:.2f}% Shot {iteration} of {total}')
+    sys.stdout.flush()
+
+
 def test_network(network, df, shots=1000):
     correct = 0
     incorrect = 0
     for n in range(shots):
+        print_progress_bar(n, shots)
+
         # Get a sample
         sample = df.sample(n=1).reset_index()
 
@@ -67,6 +79,7 @@ if __name__ == "__main__":
         network = pickle.load(file)
 
     total, correct, incorrect = test_network(network, mnist_df, shots=10000)
+    print()
     print("\t\tCount\tPercentage")
     print(f"Correct:\t{correct}\t{correct/total*100}%")
     print(f"Incorrect:\t{incorrect}\t{incorrect/total*100}%")
