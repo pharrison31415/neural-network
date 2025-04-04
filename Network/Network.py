@@ -31,9 +31,10 @@ def softmax(x):
 
 
 class Network:
-    def __init__(self, shape):
+    def __init__(self, shape, activation_fn="sigmoid"):
         self.shape = shape
         self.layer_count = len(shape)
+        self.activation_fn = activation_fn
 
         # Weights
         self.w = [
@@ -50,10 +51,21 @@ class Network:
         self.a = [np.zeros(neuron_count) for neuron_count in self.shape]
 
     def activation(self, z):
-        return sigmoid(z)
+        if self.activation_fn == "sigmoid":
+            return sigmoid(z)
+        elif self.activation_fn == "relu":
+            return relu(z)
+        elif self.activation_fn == "tanh":
+            return np.tanh(z)
 
     def activation_derivative(self, z):
-        return sigmoid_derivative(z)
+        if self.activation_fn == "sigmoid":
+            return sigmoid_derivative(z)
+        elif self.activation_fn == "relu":
+            return relu_derivative(z)
+        elif self.activation_fn == "tanh":
+            # Hyperbolic secant squared
+            return (1 / np.cosh(z)) ** 2
 
     def cost(self, a, y):
         return mean_squared_error(a, y)
